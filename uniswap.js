@@ -2,7 +2,7 @@ const axios = require("axios");
 const { Network, Alchemy } = require("alchemy-sdk");
 
 const settings = {
-  apiKey: "JOHdJUN4I8RqCltE8B7e5BQBtucmGX0G",
+  apiKey: "",
   network: Network.ETH_MAINNET,
 };
 const alchemy = new Alchemy(settings);
