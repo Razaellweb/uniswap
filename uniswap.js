@@ -89,6 +89,7 @@ async function getUserData() {
               mint(
                 id: "${txnHash}-0"
               ) {
+                timestamp
                 amount0
                 amount1
               }
@@ -124,8 +125,8 @@ async function getUserData() {
               }`,
                 }
               );
-              //  const priceUSD = response0.data.data.tokenDayData.priceUSD;
-              //  const priceUSD1 = response1.data.data.tokenDayData.priceUSD;
+                const priceUSD = response0.data.data.tokenDayData.priceUSD;
+                const priceUSD1 = response1.data.data.tokenDayData.priceUSD;
 
               // Convert the timestamp to a human-readable date and time
               const currentTime = new Date();
@@ -136,7 +137,7 @@ async function getUserData() {
               const token0price =
                 position.pair.token1Price * position.pair.token0Price;
 
-              function totalReturn(initialInvestment = (mint.amount0 * 1), initialPrice1 = position.pair.token0Price, initialPrice2 = position.pair.token0Price, currentPrice1 = position.pair.token1Price, currentPrice2 = token0price.toFixed(), amount1 = mint.amount0, amount2 = mint.amount1, timeSinceInvestment = 1.5) {
+              function totalReturn(initialInvestment = (mint.amount0 * 1), initialPrice1 = priceUSD, initialPrice2 = priceUSD1, currentPrice1 = position.pair.token1Price, currentPrice2 = token0price.toFixed(), amount1 = mint.amount0, amount2 = mint.amount1, timeSinceInvestment = time) {
                 const L = Math.sqrt(amount1 * amount2);
                 const L_0 = Math.sqrt(position.pair.token0Price * position.pair.token1Price);
                 const α = ((currentPrice1 * currentPrice2) / (initialPrice1 * initialPrice2))
