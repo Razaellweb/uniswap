@@ -125,8 +125,8 @@ async function getUserData() {
               }`,
                 }
               );
-                const priceUSD = response0.data.data.tokenDayData.priceUSD;
-                const priceUSD1 = response1.data.data.tokenDayData.priceUSD;
+              const priceUSD = response0.data.data.tokenDayData.priceUSD;
+              const priceUSD1 = response1.data.data.tokenDayData.priceUSD;
 
               // Convert the timestamp to a human-readable date and time
               const currentTime = new Date();
@@ -136,8 +136,24 @@ async function getUserData() {
               // Calculate the final token0 price
               const token0price =
                 position.pair.token1Price * position.pair.token0Price;
+              const initialInvestment = (mint.amount0 * 1) + (mint.amount1 * 2)
 
-              function totalReturn(initialInvestment = (mint.amount0 * 1), initialPrice1 = priceUSD, initialPrice2 = priceUSD1, currentPrice1 = position.pair.token1Price, currentPrice2 = token0price.toFixed(), amount1 = mint.amount0, amount2 = mint.amount1, timeSinceInvestment = time) {
+
+              //Liquidity pool
+           /*   console.log("Transaction hash: ", txnHash);
+              console.log("Time: ", time);
+              console.log("liquidityPoolToken1Amount: ", mint.amount0, position.pair.token0.symbol);
+              console.log("initial token 1 price:", position.pair.token0Price);
+              console.log("current price of token 1:", position.pair.token1Price);
+              console.log("liquidityPoolToken2Amount: ", mint.amount1, position.pair.token1.symbol);
+              console.log("current token 2 price:", position.pair.token1Price);
+              console.log("initial price of token 2:", token0price.toFixed());
+              console.log("pool address:", id);
+              console.log("initialInvestment:", initialInvestment);
+              console.log(" ");
+              console.log(" "); */
+
+              function totalReturn(constantProduct = 535364560268447, initialInvestment = (mint.amount0 * 1), initialPrice1 = priceUSD, initialPrice2 = priceUSD1, currentPrice1 = position.pair.token0Price, currentPrice2 = token0price.toFixed(), amount1 = mint.amount0, amount2 = mint.amount1, timeSinceInvestment = time) {
                 const L = Math.sqrt(amount1 * amount2);
                 const L_0 = Math.sqrt(position.pair.token0Price * position.pair.token1Price);
                 const α = ((currentPrice1 * currentPrice2) / (initialPrice1 * initialPrice2))
@@ -145,16 +161,14 @@ async function getUserData() {
                 const tradingFeesReturn = Math.exp(α * timeSinceInvestment) - 1;
                 const priceVariationReturn = Math.sqrt(currentPrice2 / initialPrice2) - 1;
                 const impermanentLoss = 1 - L / (amount1 * currentPrice1 + amount2 * currentPrice2);
-
-                return ((C) + (tradingFeesReturn * 1) + (priceVariationReturn * 1) - impermanentLoss)
+                const balance1 = Math.sqrt(constantProduct * currentPrice1)
+                const balance2 = Math.sqrt(constantProduct / currentPrice1)
+                return (balance1)
               }
-              bal += totalReturn();
-              if (txn[i] == res.transfers[res.transfers.length]) {
-                console.log(bal)
-              }
-              else {}
+              console.log(totalReturn())
 
-              function totalReturn2(initialInvestment = (mint.amount1 * 1), initialPrice1 = position.pair.token0Price, initialPrice2 = position.pair.token0Price, currentPrice1 = position.pair.token1Price, currentPrice2 = token0price.toFixed(), amount1 = mint.amount0, amount2 = mint.amount1, timeSinceInvestment = 1.5) {
+
+              function totalReturn2(constantProduct = 535364560268447, initialInvestment = (mint.amount0 * 1), initialPrice1 = priceUSD, initialPrice2 = priceUSD1, currentPrice1 = position.pair.token0Price, currentPrice2 = token0price.toFixed(), amount1 = mint.amount0, amount2 = mint.amount1, timeSinceInvestment = time) {
                 const L = Math.sqrt(amount1 * amount2);
                 const L_0 = Math.sqrt(position.pair.token0Price * position.pair.token1Price);
                 const α = ((currentPrice1 * currentPrice2) / (initialPrice1 * initialPrice2))
@@ -162,14 +176,11 @@ async function getUserData() {
                 const tradingFeesReturn = Math.exp(α * timeSinceInvestment) - 1;
                 const priceVariationReturn = Math.sqrt(currentPrice2 / initialPrice2) - 1;
                 const impermanentLoss = 1 - L / (amount1 * currentPrice1 + amount2 * currentPrice2);
-
-                return ((C) + (tradingFeesReturn * 1) + (priceVariationReturn * 1) - impermanentLoss)
+                const balance1 = Math.sqrt(constantProduct * currentPrice1)
+                const balance2 = Math.sqrt(constantProduct / currentPrice1)
+                return (balance2)
               }
-              bal2 += totalReturn2();
-              if (i = res.transfers.length) {
-                console.log(bal2)
-              }
-              else {}
+              console.log(totalReturn2())
             }
           }
           return bal;
