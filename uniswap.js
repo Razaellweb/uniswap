@@ -167,7 +167,7 @@ async function getUserData() {
 
 
               function totalReturn2(constantProduct = (position.pair.reserve0 * position.pair.reserve1), priceRatio = priceratio, currentPrice1 = position.pair.token0Price) {
-                const impermanentLoss = (((2 * (Math.sqrt(priceRatio))) / (1 + priceRatio)) - 1) / 100;
+                const impermanentLoss = (priceRatio - 1) / 100;
                 const balance2 = (Math.sqrt(constantProduct / currentPrice1))
                 return (balance2 - (impermanentLoss * balance2))
               }
