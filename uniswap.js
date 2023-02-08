@@ -152,9 +152,7 @@ async function getUserData() {
               const difference = currentTime - timed;
               const time = difference / (365.25 * 24 * 60 * 60 * 1000);
 
-              const priceratio = (token0price / priceUSD)
-              // const priceratio = (((position.pair.reserve0*1) + (position.pair.volumeToken0)) * position.pair.reserve1) / (position.pair.reserve0 + position.pair.reserve1)
-              //console.log(priceratio)
+              const priceratio = (1.172)
 
               function totalReturn(constantProduct = (position.pair.reserve0 * position.pair.reserve1), priceRatio = priceratio, currentPrice1 = position.pair.token0Price) {
                 const impermanentLoss = (((2 * Math.sqrt(priceRatio)) / (1 + priceRatio)) - 1) / 100;
