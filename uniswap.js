@@ -32,6 +32,8 @@ const query = `
         totalSupply
         volumeToken0
         volumeToken1
+        reserve0
+        reserve1
       }
       liquidityTokenBalance
     }
@@ -140,55 +142,63 @@ async function getUserData() {
 
 
               //Liquidity pool
-           /*   console.log("Transaction hash: ", txnHash);
-              console.log("Time: ", time);
-              console.log("liquidityPoolToken1Amount: ", mint.amount0, position.pair.token0.symbol);
-              console.log("initial token 1 price:", position.pair.token0Price);
-              console.log("current price of token 1:", position.pair.token1Price);
-              console.log("liquidityPoolToken2Amount: ", mint.amount1, position.pair.token1.symbol);
-              console.log("current token 2 price:", position.pair.token1Price);
-              console.log("initial price of token 2:", token0price.toFixed());
-              console.log("pool address:", id);
-              console.log("initialInvestment:", initialInvestment);
-              console.log(" ");
-              console.log(" "); */
+              /*   console.log("Transaction hash: ", txnHash);
+                 console.log("Time: ", time);
+                 console.log("liquidityPoolToken1Amount: ", mint.amount0, position.pair.token0.symbol);
+                 console.log("initial token 1 price:", position.pair.token0Price);
+                 console.log("current price of token 1:", position.pair.token1Price);
+                 console.log("liquidityPoolToken2Amount: ", mint.amount1, position.pair.token1.symbol);
+                 console.log("current token 2 price:", position.pair.token1Price);
+                 console.log("initial price of token 2:", token0price.toFixed());
+                 console.log("pool address:", id);
+                 console.log("initialInvestment:", initialInvestment);
+                 console.log(" ");
+                 console.log(" "); */
 
-              function totalReturn(constantProduct = 535364560268447, initialInvestment = (mint.amount0 * 1), initialPrice1 = priceUSD, initialPrice2 = priceUSD1, currentPrice1 = position.pair.token0Price, currentPrice2 = token0price.toFixed(), amount1 = mint.amount0, amount2 = mint.amount1, timeSinceInvestment = time) {
+              /*    console.log("liquidityPoolToken2Amount: ", (position.pair.reserve0));
+                  console.log("liquidityPoolToken1Amount: ", position.pair.reserve1);
+                  console.log("price1", priceUSD1) */
+
+              const priceratio = position.pair.token0Price / priceUSD
+
+              function totalReturn(constantProduct = (position.pair.reserve0 * position.pair.reserve1), priceRatio = priceratio, initialInvestment = (mint.amount0 * 1), initialPrice1 = priceUSD, initialPrice2 = priceUSD1, currentPrice1 = position.pair.token0Price, currentPrice2 = token0price.toFixed(), amount1 = mint.amount0, amount2 = mint.amount1, timeSinceInvestment = time) {
                 const L = Math.sqrt(amount1 * amount2);
                 const L_0 = Math.sqrt(position.pair.token0Price * position.pair.token1Price);
                 const α = ((currentPrice1 * currentPrice2) / (initialPrice1 * initialPrice2))
                 const C = initialInvestment;
                 const tradingFeesReturn = Math.exp(α * timeSinceInvestment) - 1;
                 const priceVariationReturn = Math.sqrt(currentPrice2 / initialPrice2) - 1;
-                const impermanentLoss = 1 - L / (amount1 * currentPrice1 + amount2 * currentPrice2);
-                const balance1 = Math.sqrt(constantProduct * currentPrice1)
+                // const impermanentLoss = 1 - L / (amount1 * currentPrice1 + amount2 * currentPrice2);
+                const impermanentLoss = 2 * ((Math.sqrt(priceRatio)) / ((1 + priceRatio) - 1));
+                const balance1 = (Math.sqrt(constantProduct * currentPrice1)) - impermanentLoss
                 const balance2 = Math.sqrt(constantProduct / currentPrice1)
                 return (balance1)
               }
-              console.log(totalReturn())
+              console.log(totalReturn() + "FNK")
 
 
-              function totalReturn2(constantProduct = 535364560268447, initialInvestment = (mint.amount0 * 1), initialPrice1 = priceUSD, initialPrice2 = priceUSD1, currentPrice1 = position.pair.token0Price, currentPrice2 = token0price.toFixed(), amount1 = mint.amount0, amount2 = mint.amount1, timeSinceInvestment = time) {
+              function totalReturn2(constantProduct = (position.pair.reserve0 * position.pair.reserve1), priceRatio = priceratio, initialInvestment = (mint.amount0 * 1), initialPrice1 = priceUSD, initialPrice2 = priceUSD1, currentPrice1 = position.pair.token0Price, currentPrice2 = token0price.toFixed(), amount1 = mint.amount0, amount2 = mint.amount1, timeSinceInvestment = time) {
                 const L = Math.sqrt(amount1 * amount2);
                 const L_0 = Math.sqrt(position.pair.token0Price * position.pair.token1Price);
                 const α = ((currentPrice1 * currentPrice2) / (initialPrice1 * initialPrice2))
                 const C = initialInvestment;
                 const tradingFeesReturn = Math.exp(α * timeSinceInvestment) - 1;
                 const priceVariationReturn = Math.sqrt(currentPrice2 / initialPrice2) - 1;
-                const impermanentLoss = 1 - L / (amount1 * currentPrice1 + amount2 * currentPrice2);
+                //  const impermanentLoss = 1 - L / (amount1 * currentPrice1 + amount2 * currentPrice2);
+                const impermanentLoss = 2 * Math.sqrt(priceRatio) / (1 + priceRatio) - 1;
                 const balance1 = Math.sqrt(constantProduct * currentPrice1)
-                const balance2 = Math.sqrt(constantProduct / currentPrice1)
+                const balance2 = (Math.sqrt(constantProduct / currentPrice1)) - impermanentLoss
                 return (balance2)
               }
-              console.log(totalReturn2())
+              console.log(totalReturn2() + "USDT")
             }
           }
           return bal;
         }
         processTransactions()
       };
-      console.log("Total balance of second Token " + bal2)
-      console.log("Total balance of first Token " + bal)
+      ///  console.log("Total balance of second Token " + bal2)
+      //  console.log("Total balance of first Token " + bal)
     }
   });
 }
