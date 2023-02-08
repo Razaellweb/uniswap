@@ -162,18 +162,19 @@ async function getUserData() {
                 const balance1 = (Math.sqrt(constantProduct * currentPrice1))
                 return (balance1 - (impermanentLoss2 * balance1))
               }
-              if (!uniqueBalance.has(Math.floor(totalReturn()))) {
-                uniqueBalance.add(Math.floor(totalReturn()))
+              if (!uniqueBalance.has(Math.ceil(totalReturn() / 1000000) * 1000000)) {
+                uniqueBalance.add(Math.ceil(totalReturn() / 1000000) * 1000000)
                 console.log(totalReturn())
               }
+
 
               function totalReturn2(constantProduct = (position.pair.reserve0 * position.pair.reserve1), priceRatio = priceratio, currentPrice1 = position.pair.token0Price) {
                 const impermanentLoss = (((2 * (Math.sqrt(priceRatio))) / (1 + priceRatio)) - 1) / 100;
                 const balance2 = (Math.sqrt(constantProduct / currentPrice1))
                 return (balance2 - (impermanentLoss * balance2))
               }
-              if (!uniqueBalance.has(Math.floor(totalReturn2()))) {
-                uniqueBalance.add(Math.floor(totalReturn2()))
+              if (!uniqueBalance.has(Math.ceil(totalReturn2() / 100000) * 100000)) {
+                uniqueBalance.add(Math.ceil(totalReturn2() / 100000) * 100000)
                 console.log(totalReturn2())
               }
             }
