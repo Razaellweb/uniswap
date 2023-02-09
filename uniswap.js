@@ -9,7 +9,7 @@ const alchemy = new Alchemy(settings);
 
 const query = `
 {
-  user(id: "0x76c9985d294d9aeadd33f451bfb59bc69b20c474") {
+  user(id: "0x9e5405df8a23fa331b8e9c00f39e9b39860bfee4") {
     liquidityPositions {
       pair {
         id
@@ -17,6 +17,7 @@ const query = `
           totalSupply
           symbol
           tradeVolume
+          totalLiquidity
           id
         }
         token0Price
@@ -25,6 +26,7 @@ const query = `
           symbol
           totalSupply
           tradeVolume
+          totalLiquidity
           id
         }
         volumeUSD
@@ -85,16 +87,18 @@ async function getUserData() {
       // Make a call to the Alchemy API to get the transactions data
       const res = await alchemy.core.getAssetTransfers({
         fromBlock: "0x0",
-        fromAddress: "0x76c9985d294d9aeadd33f451bfb59bc69b20c474",
+        fromAddress: "0x9e5405df8a23fa331b8e9c00f39e9b39860bfee4",
         // pass the id gotten from the liquidity position data and pass it as a parameter
         toAddress: id,
         excludeZeroValue: true,
         category: ["erc20", "erc1155", "external", "internal"],
       });
 
+
       for (let i = 0; i < res.transfers.length; i++) {
         async function processTransactions() {
           let txn = res.transfers[i];
+
           // If the transaction is unique
           if (!uniqueTransactions.has(txn.hash)) {
             // Add the transaction hash to the set of unique transactions
@@ -116,9 +120,11 @@ async function getUserData() {
             );
             // Get the mint data
             const mint = mintResponse.data.data.mint;
+
             // If the mint data exists
             if (mint) {
               const timestamp = mint.timestamp;
+              // console.log(txn)
 
               const day = Math.floor(timestamp / 86400);
               const response0 = await axios.post(
@@ -127,6 +133,10 @@ async function getUserData() {
                   query: `{
                  tokenDayData(id: "${position.pair.token0.id}-${day}")  {
                   priceUSD
+                  token {
+                    totalLiquidity
+                    totalSupply
+                  }
                 }
                  
               }`,
@@ -152,13 +162,16 @@ async function getUserData() {
               const difference = currentTime - timed;
               const time = difference / (365.25 * 24 * 60 * 60 * 1000);
 
-              const priceratio = (1.172)
+              const priceratio = (position.pair.token1.totalLiquidity / position.pair.token0.totalLiquidity) / priceUSD
+              // console.log(priceratio)
 
-              function totalReturn(constantProduct = (position.pair.reserve0 * position.pair.reserve1), priceRatio = priceratio, currentPrice1 = position.pair.token0Price) {
+
+              function totalReturn(constantProduct = position.pair.reserve1 * position.pair.reserve0, priceRatio = priceratio, currentPrice1 = position.pair.reserve1 / position.pair.reserve0) {
                 const impermanentLoss = (((2 * Math.sqrt(priceRatio)) / (1 + priceRatio)) - 1) / 100;
-                const impermanentLoss2 = (priceRatio - 1) / 100;
                 const balance1 = (Math.sqrt(constantProduct * currentPrice1))
-                return (balance1 - (impermanentLoss2 * balance1))
+                const impermanentLoss2 = (position.pair.token1Price/position.pair.token0Price) / 100;
+               //  return (balance1 - (impermanentLoss2 * balance1))
+                return (balance1)
               }
               if (!uniqueBalance.has(Math.ceil(totalReturn() / 1000000) * 1000000)) {
                 uniqueBalance.add(Math.ceil(totalReturn() / 1000000) * 1000000)
@@ -166,10 +179,11 @@ async function getUserData() {
               }
 
 
-              function totalReturn2(constantProduct = (position.pair.reserve0 * position.pair.reserve1), priceRatio = priceratio, currentPrice1 = position.pair.token0Price) {
-                const impermanentLoss = (priceRatio - 1) / 100;
+              function totalReturn2(constantProduct = position.pair.reserve1 * position.pair.reserve0, priceRatio = priceratio, currentPrice1 = position.pair.reserve1 / position.pair.reserve0) {
+                const impermanentLoss = (position.pair.token1Price/position.pair.token0Price) / 100;
                 const balance2 = (Math.sqrt(constantProduct / currentPrice1))
-                return (balance2 - (impermanentLoss * balance2))
+               // return (balance2 - (impermanentLoss * balance2))
+                return (balance2)
               }
               if (!uniqueBalance.has(Math.ceil(totalReturn2() / 100000) * 100000)) {
                 uniqueBalance.add(Math.ceil(totalReturn2() / 100000) * 100000)
