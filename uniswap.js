@@ -9,7 +9,7 @@ const alchemy = new Alchemy(settings);
 
 const query = `
 {
-  user(id: "0x9e5405df8a23fa331b8e9c00f39e9b39860bfee4") {
+  user(id: "0x76c9985d294d9aeadd33f451bfb59bc69b20c474") {
     liquidityPositions {
       pair {
         id
@@ -87,7 +87,7 @@ async function getUserData() {
       // Make a call to the Alchemy API to get the transactions data
       const res = await alchemy.core.getAssetTransfers({
         fromBlock: "0x0",
-        fromAddress: "0x9e5405df8a23fa331b8e9c00f39e9b39860bfee4",
+        fromAddress: "0x76c9985d294d9aeadd33f451bfb59bc69b20c474",
         // pass the id gotten from the liquidity position data and pass it as a parameter
         toAddress: id,
         excludeZeroValue: true,
